@@ -1,84 +1,56 @@
-# # /////////OOP's CONSEPT/////////
+# import numpy as np
+# a=np.array([3,3,3])
+# b=np.array([4,5,6])
+# print(a+b)
+# print(a*b)
+# print(a ** 2)
+# print(np.dot(a,b))
+# print(a.sum())
+# a.max()
+# a.min()
+# print(a.mean())
+# print(a.std())
 
 
-# class LC37:
-#     def student(self, name):
-#         self.name=name
-#     def display(self):
-#         self.nature() #calling nature inside the method
-#         print("The name is ", format(self.name))
-#     def nature(self):
-#         print("Hello guyssss.......")
+import socket
+import threading
+import tkinter as tk
+from tkinter import scrolledtext
 
-# a1=LC37()
-# a1.student("Sahith Poojary")
-# a1.display()
+def receive():
+    while True:
+        try:
+            msg = client_socket.recv(1024).decode("utf-8")
+            chat_area.config(state='normal')
+            chat_area.insert(tk.END, "Friend: " + msg + "\n")
+            chat_area.config(state='disabled')
+        except:
+            break
 
+def send():
+    msg = msg_entry.get()
+    msg_entry.delete(0, tk.END)
+    client_socket.send(msg.encode("utf-8"))
+    chat_area.config(state='normal')
+    chat_area.insert(tk.END, "You: " + msg + "\n")
+    chat_area.config(state='disabled')
 
-#2)-----------------------------------------------
-###PASS FAIL////////////
+win = tk.Tk()
+win.title("Client Chat")
 
-# class college:
-#     col="NITTE"
-#     def student(self,name,mark):
-#         self.name=name
-#         self.mark=mark
-#     def passfail(self):
-#         if(self.mark>40):
-#             print("PASS")
-#         else:
-#             print("Fail")
-#     def modify(self,grace):
-#         self.mark=self.mark+grace
-#     def display(self):
-#         print("Name: ",self.name)
-#         print("College: ",self.col)
-#         print("Mark: ",self.mark)
-#         self.passfail()
+chat_area = scrolledtext.ScrolledText(win, state='disabled', width=50, height=20)
+chat_area.pack()
 
-# s1=college()
-# s2=college()
-# s1.student("SAHIITH",59)
-# s2.student("SAMPREETH",60)
-# s1.display()
-# print("---------------------------------")
-# s2.display()
+msg_entry = tk.Entry(win, width=40)
+msg_entry.pack(side=tk.LEFT)
 
-# # 2 b) TO PRINT NITTE ONLY/////////
-# class college:
-#     col="NITTE"
-#     def student(self,name,mark):
-#         self.name=name
-#         self.mark=mark
-#     def passfail(self):
-#         if(self.mark>40):
-#             print("PASS")
-#         else:
-#             print("Fail")
-#     def modify(self,grace):
-#         self.mark=self.mark+grace
-#     def display(self):
-#         print("Name: ",self.name)
-#         print("College: ",self.col)
-#         print("Mark: ",self.mark)
-#         self.passfail()
-# print(college.col)
+send_btn = tk.Button(win, text="Send", command=send)
+send_btn.pack(side=tk.RIGHT)
 
 
+client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+client_socket.connect(("10.166.153.23", 9999))
+print("Connected to server")
 
-#==================================================
-
-class india:
-    def __init__(self, name):
-        self.name = name
-
-    def display(self):
-        print("The name is", self.name)
-
-    def nature(self):
-        print("{} is good player".format(self.name))
-        
-a1=india("Sampreeth")
-a1=india("Sahith")
-a1.display()
-a1.display()
+threading.Thread(target=receive).start()
+win.mainloop()
